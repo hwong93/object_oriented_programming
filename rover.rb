@@ -16,9 +16,9 @@ class Rover
     elsif @direction == 'S'
       @y_coordinate -= 1
     elsif @direction == 'E'
-      @x_coordinate + 1
+      @x_coordinate += 1
     elsif @direction == 'W'
-      @x_coordinate - 1
+      @x_coordinate -= 1
     else
       puts "don't understand input"
     end
