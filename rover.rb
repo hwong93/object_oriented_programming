@@ -52,11 +52,16 @@ class Rover
   end
 end
 
-# puts "What is the starting position x-coordinate?"
-# x_start = gets.chomp
-# puts "what is the starting position y-coordinate?"
-# y_start = gets.chomp
-# puts "what direction is the Rover facing? N S E W"
-# direction = gets.chomp
-# puts "How should the Rover travel the plateau? 'L' turn left 'R' turn right 'M' move forward:"
-# instructions = gets.chomp
+puts "What is the starting position x-coordinate?"
+x_start = gets.chomp
+puts "what is the starting position y-coordinate?"
+y_start = gets.chomp
+puts "what direction is the Rover facing? N S E W"
+direction = gets.chomp
+puts "How should the Rover travel the plateau? 'L' turn left 'R' turn right 'M' move forward:"
+instructions = gets.chomp
+array_instructions = instructions.split(//)
+
+n_rover = Rover.new(x_start.to_i, y_start.to_i, direction)
+n_rover.read_instruction(array_instructions)
+puts "New Position:\nx-coordinate: #{n_rover.x_coordinate}\ny-coordinate: #{n_rover.y_coordinate}\nDirection: #{n_rover.direction}"
