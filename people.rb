@@ -27,3 +27,7 @@ end
 # Creating instance of instructor Chris and calling the greeting method from the parent class
 chris = Instructor.new("Chris")
 chris.greeting
+
+# Creating instance of Student Cristina and call the greeting method from the parent class
+cristina = Student.new("Cristina")
+cristina.greeting
