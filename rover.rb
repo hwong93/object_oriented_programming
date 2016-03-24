@@ -50,6 +50,11 @@ class Rover
       end
     end
   end
+
+  def output
+    puts "x_coordinate: #{@x_coordinate}\ny_coordinate: #{@y_coordinate}\ndirection: #{@direction}"
+  end
+
 end
 
 puts "What is the starting position x-coordinate?"
@@ -64,4 +69,22 @@ array_instructions = instructions.split(//)
 
 n_rover = Rover.new(x_start.to_i, y_start.to_i, direction)
 n_rover.read_instruction(array_instructions)
-puts "New Position:\nx-coordinate: #{n_rover.x_coordinate}\ny-coordinate: #{n_rover.y_coordinate}\nDirection: #{n_rover.direction}"
+n_rover.output
+
+class Plateau
+
+  attr_accessor :x_size, :y_size
+  attr_reader :rover
+
+  def initialize(x_size, y_size, rover)
+    @x_size = x_size
+    @y_size = y_size
+    @rover = rover
+  end
+
+  def rover_follow(v)
+
+  end
+
+
+end
