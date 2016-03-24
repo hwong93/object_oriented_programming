@@ -12,9 +12,6 @@ class Person
 
 end
 
-
-
-
 class Student < Person
   def learn
     puts "I get it!"
@@ -26,3 +23,7 @@ class Instructor < Person
     puts "Everything in Ruby is an Object"
   end
 end
+
+# Creating instance of instructor Chris and calling the greeting method from the parent class
+chris = Instructor.new("Chris")
+chris.greeting
