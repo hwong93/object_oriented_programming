@@ -1,24 +1,49 @@
 class Rover
 
   attr_accessor :x_coordinate, :y_coordinate, :direction
+  attr_reader :plateau
 
-  def initialize(x_coordinate, y_coordinate, direction)
+
+  def initialize(x_coordinate, y_coordinate, direction, plateau)
+    @direction = direction
     @x_coordinate = x_coordinate
     @y_coordinate = y_coordinate
-    @direction = direction
+    @plateau = plateau
   end
 
   def move
 
     if @direction == 'N'
-      @y_coordinate += 1
+      # if @plateau.rover_check == true
+        @y_coordinate += 1
+      # else
+      #   puts "Rover will fall off the edge. Input new instructions"
+      #   return
+      # end
       # @y_coordinate = y_coordinate + 1
     elsif @direction == 'S'
-      @y_coordinate -= 1
+      # if @plateau.rover_check == true
+          @y_coordinate -= 1
+      # else
+      #   puts "Rover will fall off the edge. Input new instructions"
+      #   return
+      # end
+
     elsif @direction == 'E'
-      @x_coordinate += 1
+      # if @plateau.rover_check == true
+        @x_coordinate += 1
+      # else
+      #   puts "Rover will fall off the edge. Input new instructions"
+      #   return
+      # end
+
     elsif @direction == 'W'
-      @x_coordinate -= 1
+      # if @plateau.rover_check == true
+        @x_coordinate -= 1
+      # else
+      #   puts "Rover will fall off the edge. Input new instructions"
+      #   return
+      # end
     else
       puts "don't understand input"
     end
@@ -42,7 +67,13 @@ class Rover
 
     instruction.map do |value|
       if value == "M"
-        self.move
+        if @plateau.rover_check == false
+          puts "Rover will fall off the edge"
+          return
+        else
+          self.move
+        end
+
       elsif value == "L" || value == "R"
         self.turn(value)
       else
@@ -57,34 +88,45 @@ class Rover
 
 end
 
-puts "What is the starting position x-coordinate?"
-x_start = gets.chomp
-puts "what is the starting position y-coordinate?"
-y_start = gets.chomp
-puts "what direction is the Rover facing? N S E W"
-direction = gets.chomp
-puts "How should the Rover travel the plateau? 'L' turn left 'R' turn right 'M' move forward:"
-instructions = gets.chomp
-array_instructions = instructions.split(//)
-
-n_rover = Rover.new(x_start.to_i, y_start.to_i, direction)
-n_rover.read_instruction(array_instructions)
-n_rover.output
 
 class Plateau
 
-  attr_accessor :x_size, :y_size
-  attr_reader :rover
+  attr_accessor :x_size, :y_size, :rover
 
-  def initialize(x_size, y_size, rover)
+
+  def initialize(x_size, y_size, rover = nil)
     @x_size = x_size
     @y_size = y_size
     @rover = rover
   end
 
-  def rover_follow(v)
+  def rover_check
+    if (@rover.x_coordinate >= x_size || @rover.y_coordinate >= y_size) || (@rover.x_coordinate <= 0 || @rover.y_coordinate <= 0)
+      return false
+    else
+      return true
+    end
 
   end
 
 
 end
+
+
+# puts "What is the starting position x-coordinate?"
+# x_start = gets.chomp
+# puts "what is the starting position y-coordinate?"
+# y_start = gets.chomp
+# puts "what direction is the Rover facing? N S E W"
+# direction = gets.chomp
+# n_rover = Rover.new(x_start.to_i, y_start.to_i, direction, plat)
+# n_rover.output
+
+plat = Plateau.new(5, 5)
+n_rover = Rover.new(1,5,'N', plat)
+plat.rover = n_rover
+puts "How should the Rover travel the plateau? 'L' turn left 'R' turn right 'M' move forward:"
+instructions = gets.chomp
+array_instructions = instructions.split(//)
+n_rover.read_instruction(array_instructions)
+n_rover.output
