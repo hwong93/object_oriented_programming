@@ -69,7 +69,7 @@ class Rover
       if value == "M"
         if @plateau.rover_check == false
           puts "Rover will fall off the edge"
-          return false
+          return
         else
           self.move
         end
@@ -93,23 +93,22 @@ class Plateau
 
   attr_accessor :x_size, :y_size, :rover
 
-  @rover = []
 
-  def initialize(x_size, y_size, rover = [])
+  def initialize(x_size, y_size)
     @x_size = x_size
     @y_size = y_size
-    @rover = rover
+    @rover = []
   end
 
-  def enter_rover(rover)
-    @rover << rover
+  def add_rover(rovers)
+    self.rover.push(rovers)
   end
 
 
   def rover_check
 
-    @rover.each do |i|
-      if (@rover[i].x_coordinate >= x_size || @rover[i].y_coordinate >= y_size) || (@rover[i].x_coordinate <= 0 || @rover[i].y_coordinate <= 0)
+    @rover.each_index do |i|
+      if (rover[i].x_coordinate.to_i >= x_size || rover[i].y_coordinate.to_i >= y_size) || (rover[i].x_coordinate.to_i <= 0 || rover[i].y_coordinate.to_i <= 0)
         return false
       else
         return true
@@ -133,8 +132,8 @@ end
 
 plat = Plateau.new(5, 5)
 n_rover = Rover.new(1,5,'N', plat)
-plat.enter_rover(n_rover)
-# rover2 = Rover.new(1,2, 'N', plat)
+plat.add_rover(n_rover)
+# rover2 = Rover.new(2,5, 'N', plat)
 puts "How should the Rover travel the plateau? 'L' turn left 'R' turn right 'M' move forward:"
 instructions = gets.chomp
 array_instructions = instructions.split(//)
