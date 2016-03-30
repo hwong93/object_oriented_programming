@@ -1,3 +1,5 @@
+require 'pry-byebug'
+
 class Rover
 
   attr_accessor :x_coordinate, :y_coordinate, :direction
@@ -64,11 +66,14 @@ class Rover
   end
 
   def read_instruction(instruction)
-
+    binding.pry
     instruction.map do |value|
       if value == "M"
         if @plateau.rover_check == false
           puts "Rover will fall off the edge"
+          return
+        elsif @plateau.rover_collision == true
+          puts "Rovers have collided"
           return
         else
           self.move
@@ -108,7 +113,7 @@ class Plateau
   def rover_check
 
     @rover.each_index do |i|
-      if (rover[i].x_coordinate.to_i >= x_size || rover[i].y_coordinate.to_i >= y_size) || (rover[i].x_coordinate.to_i <= 0 || rover[i].y_coordinate.to_i <= 0)
+      if (rover[i].x_coordinate.to_i > x_size || rover[i].y_coordinate.to_i > y_size) || (rover[i].x_coordinate.to_i < 0 || rover[i].y_coordinate.to_i < 0)
         return false
       else
         return true
@@ -116,6 +121,25 @@ class Plateau
     end
 
   end
+
+  def rover_collision
+    #nested loop, basically takes rover_to_check and comparing it to the rover in the same array
+    @rover.each do |rover_to_check|
+      rover_to_check.move
+      @rover.each do |rover|
+        # if rover_to_check == rover it means they are comparing the same rover in the array. So we next it to the next one in the collection.
+        if rover_to_check == rover
+          next
+        end
+        if (rover_to_check.x_coordinate == rover.x_coordinate) && (rover_to_check.y_coordinate == rover.y_coordinate)
+          rover_to_check = initial_place
+          return true
+        end
+      end
+    end
+    return false
+  end
+
 
 
 end
@@ -131,11 +155,12 @@ end
 # n_rover.output
 
 plat = Plateau.new(5, 5)
-n_rover = Rover.new(1,5,'N', plat)
+n_rover = Rover.new(1,5,'S', plat)
 plat.add_rover(n_rover)
-# rover2 = Rover.new(2,5, 'N', plat)
-puts "How should the Rover travel the plateau? 'L' turn left 'R' turn right 'M' move forward:"
-instructions = gets.chomp
+rover2 = Rover.new(1,4, 'N', plat)
+plat.add_rover(rover2)
+instructions = 'M'
 array_instructions = instructions.split(//)
 n_rover.read_instruction(array_instructions)
 n_rover.output
+rover2.output
