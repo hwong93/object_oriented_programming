@@ -27,10 +27,16 @@ class Product
     @@total_sales_tax.round(2)
   end
 
+  def self.output_total_no_tax
+    @@total_payment.round(2)
+  end
+
   def self.purchase_sales
 
     @@product_list.each do |product|
       sales_tax = product.price * product.tax
+
+      puts "#{product.name}: #{(rounded + product.price).round(2)}"
       @@total_sales_tax = @@total_sales_tax + sales_tax
     end
     # sales_tax = product.price * @tax
@@ -43,14 +49,9 @@ class Product
     end
   end
 
-  def self.product_total
-    @@total_payment + @@total_sales_tax
-  end
-
-
 end
 
-class Imported_product < Product
+class ImportedProduct < Product
   attr_accessor :imported_tax_total, :imported_tax_total_both
   attr_reader :tax
   @@imported_tax = 0.15
@@ -64,43 +65,49 @@ class Imported_product < Product
   end
 
   def self.create(name, price)
-    new_import = Imported_product.new(name, price)
+    new_import = ImportedProduct.new(name, price)
     @@imported_list << new_import
     new_import
   end
 
-
+# method for products that just have import tax basically exempt imports
   def self.purchase_sales
     @@imported_list.each do |product|
-      sales_tax = product.price * @tax
+      sales_tax = product.price * product.tax
+      puts "#{product.name}: #{(sales_tax + product.price).round(2)}"
       @@imported_tax_total = @@imported_tax_total + sales_tax
     end
-
-
   end
 
+# method for products that have both import and sales tax
   def self.purchase_sales_both
     @@imported_list.each do |product|
-
       a = product.price * @@imported_tax
+      puts "#{product.name}: #{(a + product.price).round(2)}"
       @@imported_tax_total_both = @@imported_tax_total_both + a
     end
   end
 
+# total of cost of imported products without tax
   def self.total_purchase
     @@imported_list.each do |product|
       @@total_import += product.price
     end
   end
 
+  def self.import_total_no_tax
+    @@total_import.round(2)
+
+  end
+
   def self.import_totals
-    @@imported_tax_total + @@imported_tax_total_both
+    @@imported_tax_total.round(2) + @@imported_tax_total_both.round(2)
   end
 
 
 end
 
-class Exempt_product < Product
+class ExemptProduct < Product
 
   # attr_accessor :exempt_products, :exempt_tax_total
   attr_reader :tax
@@ -108,11 +115,11 @@ class Exempt_product < Product
   @@exempt_tax_total = 0
   def initialize(name, price)
     super
-    @tax = 0
+    @tax = 0.00
   end
 
   def self.create(name, price)
-    exempt = Exempt_product.new(name, price)
+    exempt = ExemptProduct.new(name, price)
     @@exempt_products << exempt
     exempt
   end
@@ -120,83 +127,55 @@ class Exempt_product < Product
 
   def self.purchase_sales
     @@exempt_products.each do |product|
+      puts "#{product.name}: #{product.price}"
       @@exempt_tax_total += product.price
     end
   end
 
+  def self.total_exempt
+    @@exempt_tax_total.round(2)
+  end
+
 end
 
-grocery_list = ["1 book at 12.49", "1 music CD at 14.99", "1 chocolate bar at 0.85"]
+grocery_list = []
 
-# puts "How many items on your list?"
-# answer = gets.chomp.to_i
-# answer.times do
-#   puts "Give me an item: "
-#   item = gets.chomp
-#   grocery_list << item
-# end
-# new_grocery_list = []
-#
-# grocery_list.each_index do |index|
-#   a = grocery_list[index].split(" at ", 2)
-#   new_grocery_list << a
-# end
+puts "How many items on your list?"
+answer = gets.chomp.to_i
+answer.times do
+  puts "Give me an item: "
+  item = gets.chomp
+  grocery_list << item
+end
+new_grocery_list = []
 
-yes = Product.create('yes', '1.12'.to_f)
- Product.purchase_sales
-puts Product.output_total_sales_tax
-
-# new_grocery_list.each do |item|
-#   if item[0].include? "imported"
-#     a = item[1].to_f
-#     Imported_product.create(item[0], a)
-#
-#   elsif item[0].include?("chocolate") || item[0].include?("chocolates") || item[0].include?("book") || item[0].include?("pills")
-#     a = item[1].to_f
-#     puts a.class
-#     Exempt_product.create(item[0], a)
-#
-#   else
-#     a = item[1].to_f
-#     puts a.class
-#     Product.create(item[0], a)
-#
-#   end
-# end
-#
-# puts "#{Product.purchase_sales}"
+grocery_list.each_index do |index|
+  a = grocery_list[index].split(" at ", 2)
+  new_grocery_list << a
+end
 
 
+new_grocery_list.each do |item|
+  if item[0].include? "imported"
+    ImportedProduct.create(item[0], item[1].to_f)
 
+  elsif item[0].include?("chocolate") || item[0].include?("chocolates") || item[0].include?("book") || item[0].include?("pills")
+    ExemptProduct.create(item[0], item[1].to_f)
 
+  else
+    Product.create(item[0], item[1].to_f)
 
+  end
+end
 
-#
-# reg_items.each do |items|
-#   reg_sales_tax = items.purchase_sales
-#   reg_total = items.purchase_total
-# end
-#
-# import_sales = 0
-# import_total = 0
-# imported_items.each do |items|
-#   if items[0].include? "perfume"
-#     a = items.purchase_sales_both
-#   else
-#     b = items.purchase_sales
-#   end
-#   import_sales = a + b
-#   import_total = items.purchase_total
-# end
-#
-# exempt_sales = 0
-# exempt_total = 0
-# exempt_items.each do |items|
-#   exempt_sales = items.purchase_sales
-# end
-#
-# sales_total = reg_sales_tax + import_sales + exempt_sales
-# total = sales_total + reg_total + import_total + exempt_total
-#
-# puts sales_total
-# puts total
+Product.purchase_sales
+Product.purchase_total
+ImportedProduct.purchase_sales
+ImportedProduct.purchase_sales_both
+ImportedProduct.total_purchase
+ExemptProduct.purchase_sales
+
+total_sales_tax = (Product.output_total_sales_tax + ImportedProduct.import_totals).round(2)
+puts "Sales Taxes: #{total_sales_tax}"
+total = (total_sales_tax + ExemptProduct.total_exempt + ImportedProduct.import_total_no_tax + Product.output_total_no_tax).round(2)
+puts "Total: #{total}"
